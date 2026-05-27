@@ -712,7 +712,7 @@
   <div class="contact-layout fade-in">
     <div class="contact-intro">
       <p>Have a project in mind? I'd love to hear about it. Fill out the form or reach out directly I typically respond within 24 hours.</p>
-      <!--<a href="mailto:you@email.com" class="contact-link">
+      a href="mailto:winnaebimalo@gmail.com" class="contact-link">
         <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
         you@email.com
       </a>
@@ -741,7 +741,7 @@
         <label for="message">Message</label>
         <textarea id="message" placeholder="Tell me about your project..."></textarea>
       </div>
-      <button class="btn-submit" onclick="handleSubmit()">Send Message →</button>
+      <button class="btn-submit" onclick="sendEmail()">Send Message →</button>
     </div>
   </div>
 </section>
@@ -763,15 +763,14 @@
 
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Form handler placeholder
-  function handleSubmit() {
-    const btn = document.querySelector('.btn-submit');
-    btn.textContent = 'Message Sent ✓';
-    btn.style.background = 'var(--accent)';
-    setTimeout(() => {
-      btn.textContent = 'Send Message \u2192';
-      btn.style.background = '';
-    }, 2500);
+// Email form handler
+  function sendEmail() {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value || 'Portfolio Enquiry';
+    const message = document.getElementById('message').value;
+    const body = 'Name: ' + name + '\nEmail: ' + email + '\n\n' + message;
+    window.location.href = 'mailto:winnaebimalo@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   }
 
   // Smooth nav scroll
