@@ -596,6 +596,14 @@
 </style>
 </head>
 <body>
+  <!-- PASSWORD SCREEN -->
+<div id="passwordScreen" style="position:fixed; inset:0; z-index:9999; background:#FAFAF8; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1.5rem;">
+  <h1 style="font-family:'Instrument Sans',sans-serif; font-size:1.5rem; font-weight:700; color:#1A1A18; letter-spacing:-0.02em;">Winna Ebimalo</h1>
+  <p style="font-family:'Instrument Sans',sans-serif; font-size:0.9rem; color:#6B6B66;">Enter password to view portfolio</p>
+  <input type="password" id="passInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPass()" style="font-family:'Instrument Sans',sans-serif; font-size:0.95rem; padding:0.85rem 1rem; border:1.5px solid #E8E8E4; border-radius:8px; outline:none; width:260px; text-align:center;">
+  <button onclick="checkPass()" style="font-family:'Instrument Sans',sans-serif; font-size:0.875rem; font-weight:600; padding:0.85rem 1.75rem; background:#1A1A18; color:#FAFAF8; border:none; border-radius:6px; cursor:pointer;">Enter</button>
+  <p id="passError" style="font-family:'Instrument Sans',sans-serif; font-size:0.8rem; color:#c0392b; display:none;">Incorrect password</p>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -747,6 +755,14 @@
 </footer>
 
 <script>
+  // Password protection
+  function checkPass() {
+    if (document.getElementById('passInput').value === 'QW321') {
+      document.getElementById('passwordScreen').style.display = 'none';
+    } else {
+      document.getElementById('passError').style.display = 'block';
+    }
+  }
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
