@@ -1,0 +1,688 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pistachio cheesecake — a walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#0D0D0D;
+    --paper:#FAF8F3;
+    --paper-2:#F0ECE2;
+    --paper-3:#E4DED0;
+    --line:#D8D1C2;
+    --muted:#6C6659;
+    --green:#0B4A34;
+    --green-lt:#2F7A57;
+    --gold:#A9884E;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --sans:"Jost",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:16.5px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:0 clamp(18px,4vw,44px)}
+
+  .caps{
+    font-family:var(--sans);font-weight:400;
+    font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{background:var(--ink);color:var(--paper);padding:clamp(40px,7vw,84px) 0 clamp(36px,6vw,68px)}
+  .hero .caps{color:var(--paper);opacity:.62;margin:0 0 26px}
+  .hero h1{
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(2.5rem,7vw,5rem);line-height:1.02;letter-spacing:-.015em;
+    margin:0 0 22px;max-width:15ch;
+  }
+  .hero h1 em{font-style:italic;font-weight:300}
+  .hero .lede{
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(1.05rem,1.9vw,1.28rem);line-height:1.62;
+    color:#DDD8CC;max-width:54ch;margin:0;
+  }
+  .facts{
+    display:flex;flex-wrap:wrap;gap:0;margin:36px 0 0;
+    border-top:1px solid rgba(250,248,243,.22);
+  }
+  .fact{
+    flex:1 1 130px;padding:18px 20px 0 0;
+  }
+  .fact dt{color:var(--paper);opacity:.55;margin:0 0 5px}
+  .fact dd{
+    margin:0;font-family:var(--serif);font-size:1.42rem;font-weight:300;letter-spacing:-.01em;
+  }
+
+  /* ---------- photo ---------- */
+  .hero{position:relative;overflow:hidden}
+  .hero-inner{position:relative;z-index:2}
+  .hero-shot{display:none}
+  .has-shot .hero-shot{display:block;width:100%;height:clamp(200px,44vw,300px);object-fit:cover;object-position:62% 50%;margin:34px 0 0}
+  @media (min-width:940px){
+    .has-shot .hero-shot{
+      position:absolute;top:0;right:0;margin:0;
+      width:64%;height:100%;object-position:58% 50%;z-index:1;
+      -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 26%,#000 52%);
+      mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 26%,#000 52%);
+    }
+    .has-shot .hero h1,.has-shot .hero .lede{max-width:24ch}
+    .has-shot .facts{max-width:50%}
+  }
+
+  /* ---------- ribbon ---------- */
+  .ribbon-wrap{padding:clamp(34px,5vw,54px) 0 clamp(24px,4vw,38px)}
+  .ribbon-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  .ribbon-head .caps{color:var(--muted)}
+  .ribbon{display:flex;gap:2px;height:22px}
+  .seg{
+    flex-grow:var(--w);flex-basis:0;min-width:6px;
+    border:0;padding:0;cursor:pointer;background:var(--paper-3);
+    transition:background .25s ease,transform .25s ease;
+  }
+  .seg.wait{background:repeating-linear-gradient(115deg,var(--paper-3) 0 4px,var(--paper-2) 4px 8px)}
+  .seg[aria-current="step"]{background:var(--green);transform:scaleY(1.3)}
+  .seg[aria-current="step"].wait{background:repeating-linear-gradient(115deg,var(--green) 0 4px,var(--green-lt) 4px 8px)}
+  .seg:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .ribbon-key{font-size:13px;color:var(--muted);margin:11px 0 0;font-family:var(--serif)}
+
+  /* ---------- stage ---------- */
+  .stage{display:grid;grid-template-columns:1fr;gap:clamp(26px,4vw,52px);padding-bottom:70px}
+  .canvas-col{position:sticky;top:0;z-index:2;background:var(--paper);padding-bottom:14px}
+  @media (max-width:939px){
+    .scene{max-height:40vh}
+    .canvas-col figure{display:flex;flex-direction:column;align-items:center}
+    figcaption{min-height:2.6em;text-align:center}
+  }
+  @media (min-width:940px){
+    .stage{grid-template-columns:minmax(0,1.04fr) minmax(0,1fr);align-items:start}
+    .canvas-col{top:22px}
+  }
+
+  figure{margin:0}
+  .scene{width:100%;height:auto;display:block;background:var(--paper-2)}
+  figcaption{
+    font-family:var(--serif);font-size:15px;line-height:1.55;font-style:italic;
+    color:var(--muted);margin-top:14px;min-height:3.1em;
+  }
+  figcaption b{color:var(--ink);font-style:normal;font-weight:600}
+
+  /* ---------- steps ---------- */
+  ol.steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+  ol.steps > li{border-bottom:1px solid var(--line)}
+  .step-btn{
+    display:grid;grid-template-columns:70px 1fr;gap:16px;align-items:baseline;
+    width:100%;text-align:left;background:none;border:0;padding:18px 2px;
+    font:inherit;cursor:pointer;
+  }
+  .step-btn:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+  .clock{
+    font-family:var(--sans);font-weight:400;font-size:11px;letter-spacing:.16em;
+    color:var(--muted);
+  }
+  .step-title{
+    font-family:var(--serif);font-weight:400;font-size:1.3rem;line-height:1.2;
+    letter-spacing:-.01em;color:var(--muted);
+  }
+  li[data-active="true"] .step-title{color:var(--ink)}
+  li[data-active="true"] .clock{color:var(--green)}
+
+  .step-body{display:none;padding:0 2px 26px 86px}
+  li[data-active="true"] .step-body{display:block}
+  @media (max-width:520px){ .step-body{padding-left:0} }
+  .step-body p{margin:0 0 16px;max-width:46ch}
+  .chips{display:flex;flex-wrap:wrap;gap:0;margin:0;padding:0;list-style:none;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .chips li{
+    font-family:var(--serif);font-size:14.5px;padding:9px 18px 9px 0;
+    color:var(--ink);flex:1 1 auto;
+  }
+  .watch{
+    font-family:var(--serif);font-size:15px;font-style:italic;color:var(--green);
+    margin:18px 0 0;max-width:46ch;padding-left:16px;border-left:2px solid var(--green);
+  }
+
+  /* ---------- timer ---------- */
+  .timer{
+    margin:20px 0 0;padding:16px 18px;background:var(--ink);color:var(--paper);
+    max-width:46ch;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .timer-read{
+    font-family:var(--serif);font-weight:300;font-size:2.1rem;line-height:1;
+    font-variant-numeric:tabular-nums;min-width:4.6ch;letter-spacing:-.01em;
+  }
+  .timer[data-state="done"]{background:var(--green)}
+  .timer[data-state="done"] .timer-read{animation:blink 1.1s steps(1,end) infinite}
+  @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.25}}
+  .t-btn{
+    font-family:var(--sans);font-weight:400;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    background:none;border:1px solid rgba(250,248,243,.5);color:var(--paper);
+    padding:9px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;
+  }
+  .t-btn:hover{background:var(--paper);color:var(--ink)}
+  .t-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .t-note{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-left:auto}
+
+  nav.controls{display:flex;gap:12px;margin-top:28px;align-items:center;flex-wrap:wrap}
+  .ctrl{
+    font-family:var(--sans);font-weight:400;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);border:1px solid var(--ink);
+    padding:13px 24px;cursor:pointer;transition:opacity .2s ease;
+  }
+  .ctrl.ghost{background:none;color:var(--ink)}
+  .ctrl[disabled]{opacity:.25;cursor:default}
+  .ctrl:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .hint{font-size:12px;color:var(--muted)}
+
+  footer{background:var(--paper-2);margin-top:0;padding:30px 0 40px;border-top:1px solid var(--line)}
+  footer p{margin:0 0 8px;font-size:13px;color:var(--muted);max-width:70ch}
+  footer a{color:var(--green)}
+
+  /* ---------- scene animation ---------- */
+  .crumb-packed,.filling{transform-box:fill-box;transform-origin:bottom center}
+  .pour{transform-box:fill-box;transform-origin:top center}
+  .nut{transform-box:fill-box;transform-origin:center}
+
+  .crumb-packed,.filling,.crumb-loose,.bowl,.bowl-fill,.frost,.ring,.nut{
+    transition:transform .9s cubic-bezier(.33,.9,.3,1),opacity .55s ease;
+  }
+  .filling{transition:transform 1.5s cubic-bezier(.4,0,.2,1) .35s,opacity .5s ease}
+  .frost{transition:opacity .8s ease .9s}
+
+  .crumb-loose{opacity:0}
+  .scene[data-step="1"] .crumb-loose{opacity:1}
+  .scene[data-step="1"] .crumb-packed{transform:scaleY(.02)}
+  .scene:is([data-step="1"],[data-step="2"],[data-step="3"],[data-step="4"],[data-step="5"]) .filling{transform:scaleY(0)}
+  .frost{opacity:0}
+  .scene:is([data-step="2"],[data-step="3"],[data-step="4"],[data-step="5"],[data-step="6"]) .frost{opacity:1}
+  .bowl{opacity:0;transform:translateY(-12px)}
+  .scene:is([data-step="3"],[data-step="4"],[data-step="5"],[data-step="6"]) .bowl{opacity:1;transform:translateY(0)}
+  .bowl-fill{opacity:0}
+  .scene[data-step="3"] .fill-sand{opacity:1}
+  .scene[data-step="4"] .fill-cream{opacity:1}
+  .scene:is([data-step="5"],[data-step="6"]) .fill-green{opacity:1}
+  .scene[data-step="6"] .bowl{opacity:.32}
+  .pour{opacity:0}
+  .scene[data-step="6"] .pour{animation:pourFlow 1.9s ease-in forwards}
+  @keyframes pourFlow{
+    0%{opacity:0;transform:scaleY(.05)}
+    18%{opacity:1;transform:scaleY(1)}
+    72%{opacity:1;transform:scaleY(1)}
+    100%{opacity:0;transform:scaleY(1)}
+  }
+  .nut{opacity:0;transform:scale(.3) translateY(-8px)}
+  .scene[data-step="7"] .nut{opacity:1;transform:scale(1) translateY(0)}
+  .ring{opacity:1;transform:translateY(0)}
+  .scene[data-step="7"] .ring{opacity:0;transform:translateY(-86px)}
+
+  @media (prefers-reduced-motion:reduce){
+    .crumb-packed,.filling,.crumb-loose,.bowl,.bowl-fill,.frost,.ring,.nut,.seg{transition-duration:.01ms !important}
+    .scene[data-step="6"] .pour{animation:none;opacity:0}
+    .timer[data-state="done"] .timer-read{animation:none}
+  }
+</style>
+
+<header class="hero" id="hero">
+  <img class="hero-shot" id="shotImg" alt="Pistachio cheesecake on a dark slate board, sliced, topped with chopped pistachios, toasted flaked almonds and mint leaves">
+  <div class="wrap hero-inner">
+    <p class="caps">Recipe · No bake</p>
+    <h1>Pistachio <em>cheesecake</em></h1>
+    <p class="lede">There is no oven in this recipe. The colour comes from blitzing raw pistachios into the sugar rather than out of a bottle — and that is the one step where it is easy to go wrong. Step through it below and watch the cake build.</p>
+    <dl class="facts">
+      <div class="fact"><dt class="caps">Serves</dt><dd>12</dd></div>
+      <div class="fact"><dt class="caps">Hands on</dt><dd>25 min</dd></div>
+      <div class="fact"><dt class="caps">Chilling</dt><dd>5 hr</dd></div>
+      <div class="fact"><dt class="caps">Difficulty</dt><dd>Easy</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="ribbon-wrap" aria-label="Time spent on each stage">
+    <div class="ribbon-head">
+      <span class="caps">00:00</span>
+      <span class="caps">05:20</span>
+    </div>
+    <div class="ribbon" id="ribbon" role="tablist" aria-label="Jump to a stage"></div>
+    <p class="ribbon-key">Blocks are sized by real time. The hatched ones are the fridge doing the work.</p>
+  </section>
+
+  <div class="stage">
+    <div class="canvas-col">
+      <figure>
+        <svg class="scene" id="scene" data-step="1" viewBox="0 0 520 430" role="img" aria-label="Cross-section of a cheesecake being assembled in a springform tin">
+          <defs>
+            <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#A5A29B"/><stop offset=".45" stop-color="#D2CFC7"/><stop offset="1" stop-color="#9A968F"/>
+            </linearGradient>
+            <linearGradient id="gFill" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#E4DDC2"/><stop offset=".38" stop-color="#F4EEDC"/><stop offset="1" stop-color="#E0D8BC"/>
+            </linearGradient>
+            <linearGradient id="gBase" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#96764A"/><stop offset=".4" stop-color="#C6A67B"/><stop offset="1" stop-color="#927247"/>
+            </linearGradient>
+            <linearGradient id="gFrost" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#F2F5F3" stop-opacity=".7"/><stop offset="1" stop-color="#D8E2DC" stop-opacity=".16"/>
+            </linearGradient>
+            <clipPath id="tinClip"><rect x="120" y="124" width="280" height="216"/></clipPath>
+            <clipPath id="bowlClip"><path d="M168 54 L182 130 Q262 160 342 130 L356 54 Z"/></clipPath>
+          </defs>
+
+          <ellipse cx="260" cy="356" rx="176" ry="11" fill="#C3BCAC" opacity=".55"/>
+          <rect x="104" y="338" width="312" height="11" rx="2" fill="url(#gSteel)"/>
+
+          <g clip-path="url(#tinClip)">
+            <g class="crumb-packed">
+              <rect x="120" y="300" width="280" height="40" fill="url(#gBase)"/>
+              <g id="packedSpeckle"></g>
+            </g>
+            <g class="filling">
+              <rect x="120" y="170" width="280" height="130" fill="url(#gFill)"/>
+              <g id="fillingFleck"></g>
+              <rect x="120" y="170" width="280" height="4" fill="#FAF5E7" opacity=".9"/>
+            </g>
+            <g class="crumb-loose" id="looseCrumbs"></g>
+          </g>
+
+          <g id="topNuts"></g>
+
+          <g class="ring">
+            <rect x="112" y="128" width="9" height="212" fill="url(#gSteel)"/>
+            <rect x="399" y="128" width="9" height="212" fill="url(#gSteel)"/>
+            <path d="M408 196 h16 a5 5 0 0 1 5 5 v28 a5 5 0 0 1 -5 5 h-16 z" fill="#A5A29B"/>
+            <rect x="414" y="206" width="14" height="4" fill="#D2CFC7"/>
+          </g>
+
+          <g class="frost">
+            <rect x="120" y="124" width="280" height="216" fill="url(#gFrost)"/>
+            <g stroke="#FBFDFC" stroke-width="2" stroke-linecap="round" opacity=".9">
+              <path d="M150 210 v12 M144 216 h12"/>
+              <path d="M232 176 v10 M227 181 h10"/>
+              <path d="M330 246 v12 M324 252 h12"/>
+              <path d="M368 190 v9 M363.5 194.5 h9"/>
+              <path d="M186 272 v9 M181.5 276.5 h9"/>
+            </g>
+          </g>
+
+          <path class="pour" d="M248 148 C246 200 242 244 244 300 L276 300 C278 244 274 200 272 148 Z" fill="url(#gFill)" opacity=".95"/>
+
+          <g class="bowl">
+            <path d="M168 54 L182 130 Q262 160 342 130 L356 54 Z" fill="#EAE6DC"/>
+            <g clip-path="url(#bowlClip)">
+              <rect class="bowl-fill fill-sand" x="160" y="112" width="204" height="52" fill="#7C9A3E"/>
+              <g class="bowl-fill fill-sand" id="sandSpeckle"></g>
+              <rect class="bowl-fill fill-cream" x="160" y="74" width="204" height="90" fill="#FCFAF4"/>
+              <g class="bowl-fill fill-green">
+                <rect x="160" y="76" width="204" height="88" fill="url(#gFill)"/>
+                <g id="bowlFleck"></g>
+              </g>
+            </g>
+            <ellipse cx="262" cy="54" rx="94" ry="11" fill="none" stroke="#C6C0B2" stroke-width="5"/>
+          </g>
+        </svg>
+        <figcaption id="caption" aria-live="polite"></figcaption>
+      </figure>
+    </div>
+
+    <div class="steps-col">
+      <ol class="steps" id="steps"></ol>
+      <nav class="controls">
+        <button class="ctrl ghost" id="prev" type="button">Back</button>
+        <button class="ctrl" id="next" type="button">Next step</button>
+        <span class="hint">or use ← →</span>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Recipe adapted from the <a href="https://www.marksandspencer.com/c/food-and-wine/cooking/recipes/203062/pistachio-cheesecake/">M&amp;S pistachio cheesecake</a>. Tin: 20–23cm springform. Header image generated with AI.</p>
+    <p>This is a personal project and is not affiliated with, endorsed by, or connected to Marks &amp; Spencer plc.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var STEPS = [
+    { clock:"00:00", mins:5, wait:false,
+      title:"Crush the biscuits",
+      body:"Blitz the cookies to fine, sandy crumbs, then stir through the melted butter until every crumb looks damp and holds together when you squeeze a handful.",
+      chips:["300g pistachio &amp; almond cookies","175g butter, melted"],
+      watch:"Line the tin base with a disc of baking paper now — far easier than after.",
+      caption:"<b>Loose crumb.</b> Buttered, not yet compacted." },
+
+    { clock:"00:05", mins:60, wait:true, timer:3600,
+      title:"Press it flat, then chill",
+      body:"Tip the crumbs into the tin and press down hard with the back of a wooden spoon until the surface is flat and even. Chill for an hour so the butter sets the base solid.",
+      chips:["1 hour in the fridge"],
+      watch:"Press the edges harder than the middle — that is where bases crumble when you slice.",
+      caption:"<b>Base set.</b> Cold butter is the only thing holding it together." },
+
+    { clock:"01:05", mins:3, wait:false,
+      title:"Blitz the pistachio sugar",
+      body:"While the base chills, blitz the pistachios with the sugar in the same processor bowl. No need to wash it. You want a fine, sandy green — the sugar crystals do the grinding.",
+      chips:["150g pistachios","200g caster sugar"],
+      watch:"Stop while it is still sandy. Keep going and the nut oils release, and you get paste, which will not dissolve into the filling.",
+      caption:"<b>Pistachio sugar.</b> This is where the colour comes from." },
+
+    { clock:"01:08", mins:3, wait:false,
+      title:"Whip cheese and cream",
+      body:"Beat the soft cheese with the double cream using an electric hand whisk, until completely smooth with no visible lumps.",
+      chips:["750g full-fat soft cheese","150ml double cream"],
+      watch:"Full-fat only. Reduced-fat soft cheese carries too much water and the cheesecake will slump.",
+      caption:"<b>Smooth and white.</b> Room-temperature cheese lumps less." },
+
+    { clock:"01:11", mins:2, wait:false,
+      title:"Fold in the pistachio sugar",
+      body:"Whisk in the pistachio sugar and the vanilla until evenly combined and the mixture holds its shape on the whisk. It will look like flecked cream, not green — that is correct.",
+      chips:["1 tsp vanilla extract"],
+      watch:"Stop the second it holds. Over-whipped cream splits and turns grainy, and there is no coming back from it.",
+      caption:"<b>Cream, flecked green.</b> Ground nuts colour far less than you expect." },
+
+    { clock:"01:13", mins:242, wait:true, timer:14400,
+      title:"Fill the tin and set",
+      body:"Spoon the filling over the chilled base and smooth the top with a spatula. Chill for at least four hours — overnight if you can wait.",
+      chips:["4 hours minimum","overnight is better"],
+      watch:"Four hours slices messily. Overnight slices cleanly. That is the whole difference.",
+      caption:"<b>Filled and chilling.</b> Four of the five hours are right here." },
+
+    { clock:"05:15", mins:5, wait:false,
+      title:"Release and scatter",
+      body:"Unclip the ring and lift it away. Scatter over the chopped pistachios, the toasted flaked almonds and small mint leaves, then serve in slim wedges — it is rich.",
+      chips:["50g pistachios, chopped","25g flaked almonds, toasted","a few sprigs of mint"],
+      watch:"Toast the almonds dry in a pan until just golden and let them cool fully. Warm almonds will weep into the surface.",
+      caption:"<b>Done.</b> Pistachios, toasted almonds and mint. No oven involved." }
+  ];
+
+  var seed = 20250802;
+  function rnd(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
+  function ns(t){ return document.createElementNS("http://www.w3.org/2000/svg", t); }
+  function fmt(total){
+    var h = Math.floor(total/3600), m = Math.floor((total%3600)/60), s = total%60;
+    function pad(v){ return v < 10 ? "0" + v : String(v); }
+    return (h > 0 ? h + ":" + pad(m) : String(m)) + ":" + pad(s);
+  }
+
+  /* ---------- audio: unlocked on first Start press, reused later ---------- */
+  var actx = null;
+
+  function unlockAudio(){
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return;
+      if(!actx) actx = new Ctx();
+      if(actx.state === "suspended") actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain();
+      g.gain.value = 0.00001;
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + 0.02);
+    }catch(e){}
+  }
+
+  function pip(at, freq){
+    var o = actx.createOscillator(), g = actx.createGain();
+    o.type = "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.00001, at);
+    g.gain.exponentialRampToValueAtTime(0.3, at + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.00001, at + 0.4);
+    o.connect(g); g.connect(actx.destination);
+    o.start(at); o.stop(at + 0.45);
+  }
+
+  function alarm(){
+    try{
+      if(!actx) unlockAudio();
+      if(!actx) return;
+      if(actx.state === "suspended") actx.resume();
+      var t = actx.currentTime + 0.06;
+      pip(t, 880); pip(t + 0.5, 880); pip(t + 1.0, 1175);
+    }catch(e){}
+  }
+
+  /* ---------- optional photo: applies only if the file is present ---------- */
+  (function(){
+    var PHOTO = "cheesecake-photo.jpg";
+    var img = document.getElementById("shotImg");
+    img.onload = function(){ document.body.classList.add("has-shot"); };
+    img.onerror = function(){ img.remove(); };
+    img.src = PHOTO;
+  })();
+
+  /* ---------- build ribbon + steps ---------- */
+  var ribbon = document.getElementById("ribbon");
+  var list = document.getElementById("steps");
+
+  STEPS.forEach(function(s, idx){
+    var seg = document.createElement("button");
+    seg.type = "button";
+    seg.className = "seg" + (s.wait ? " wait" : "");
+    seg.style.setProperty("--w", s.mins);
+    seg.setAttribute("role","tab");
+    seg.setAttribute("aria-label", s.clock + " — " + s.title + ", " + s.mins + " minutes");
+    seg.addEventListener("click", function(){ go(idx); });
+    ribbon.appendChild(seg);
+
+    var li = document.createElement("li");
+    li.innerHTML =
+      '<button class="step-btn" type="button">' +
+        '<span class="clock">' + s.clock + '</span>' +
+        '<span class="step-title">' + s.title + '</span>' +
+      '</button>' +
+      '<div class="step-body">' +
+        '<p>' + s.body + '</p>' +
+        '<ul class="chips">' + s.chips.map(function(c){ return '<li>' + c + '</li>'; }).join('') + '</ul>' +
+        '<p class="watch">' + s.watch + '</p>' +
+        (s.timer ?
+          '<div class="timer" data-state="idle" data-secs="' + s.timer + '">' +
+            '<span class="timer-read">' + fmt(s.timer) + '</span>' +
+            '<button class="t-btn go" type="button">Start</button>' +
+            '<button class="t-btn test" type="button">Test</button>' +
+            '<span class="t-note">tab must stay open</span>' +
+          '</div>' : '') +
+      '</div>';
+    li.querySelector(".step-btn").addEventListener("click", function(){ go(idx); });
+    list.appendChild(li);
+  });
+
+  /* ---------- countdowns ---------- */
+  var origTitle = document.title, titleFlash = null;
+
+  Array.prototype.forEach.call(document.querySelectorAll(".timer"), function(box){
+    var total = parseInt(box.getAttribute("data-secs"), 10);
+    var read = box.querySelector(".timer-read");
+    var go_ = box.querySelector(".go");
+    var test = box.querySelector(".test");
+    var note = box.querySelector(".t-note");
+    var endsAt = null, tick = null, fuse = null;
+
+    function reset(){
+      clearInterval(tick); clearTimeout(fuse);
+      tick = null; fuse = null; endsAt = null;
+      read.textContent = fmt(total);
+      box.setAttribute("data-state","idle");
+      go_.textContent = "Start";
+      note.textContent = "tab must stay open";
+      if(titleFlash){ clearInterval(titleFlash); titleFlash = null; document.title = origTitle; }
+    }
+
+    function finish(){
+      clearInterval(tick); clearTimeout(fuse);
+      tick = null; fuse = null; endsAt = null;
+      read.textContent = "0:00";
+      box.setAttribute("data-state","done");
+      go_.textContent = "Reset";
+      note.textContent = "ready";
+      alarm();
+      var on = false;
+      if(titleFlash) clearInterval(titleFlash);
+      titleFlash = setInterval(function(){
+        on = !on;
+        document.title = on ? "⏰ Timer finished" : origTitle;
+      }, 900);
+    }
+
+    function paint(){
+      if(endsAt === null) return;
+      var left = Math.round((endsAt - Date.now()) / 1000);
+      if(left <= 0){ finish(); return; }
+      read.textContent = fmt(left);
+    }
+
+    go_.addEventListener("click", function(){
+      if(tick || box.getAttribute("data-state") === "done"){ reset(); return; }
+      unlockAudio();
+      endsAt = Date.now() + total * 1000;
+      box.setAttribute("data-state","running");
+      go_.textContent = "Cancel";
+      note.textContent = "counting down";
+      paint();
+      tick = setInterval(paint, 1000);
+      fuse = setTimeout(finish, total * 1000 + 120);
+    });
+
+    test.addEventListener("click", function(){ unlockAudio(); setTimeout(alarm, 60); });
+
+    document.addEventListener("visibilitychange", function(){
+      if(!document.hidden) paint();
+    });
+  });
+
+  /* ---------- scene decoration ---------- */
+  var loose = document.getElementById("looseCrumbs");
+  for (var i=0;i<64;i++){
+    var x = 126 + rnd()*268;
+    var lift = 62 * (1 - Math.pow((x-260)/150, 2)); if (lift < 4) lift = 4;
+    var y = 340 - rnd()*lift, sz = 3 + rnd()*4.5;
+    var r = ns("rect");
+    r.setAttribute("x", x.toFixed(1)); r.setAttribute("y", y.toFixed(1));
+    r.setAttribute("width", sz.toFixed(1)); r.setAttribute("height", (sz*0.8).toFixed(1));
+    r.setAttribute("fill", rnd() > 0.45 ? "#C6A67B" : "#96764A");
+    r.setAttribute("transform", "rotate(" + (rnd()*90-45).toFixed(0) + " " + x.toFixed(1) + " " + y.toFixed(1) + ")");
+    loose.appendChild(r);
+  }
+  var packed = document.getElementById("packedSpeckle");
+  for (var j=0;j<46;j++){
+    var c = ns("circle");
+    c.setAttribute("cx", (124 + rnd()*272).toFixed(1));
+    c.setAttribute("cy", (303 + rnd()*34).toFixed(1));
+    c.setAttribute("r", (0.9 + rnd()*1.7).toFixed(1));
+    c.setAttribute("fill", rnd() > 0.6 ? "#7A5C35" : "#DEC59B");
+    c.setAttribute("opacity", ".75"); packed.appendChild(c);
+  }
+  var fleck = document.getElementById("fillingFleck");
+  for (var k=0;k<96;k++){
+    var f = ns("ellipse");
+    var fx = 126 + rnd()*268, fy = 176 + rnd()*118;
+    f.setAttribute("cx", fx.toFixed(1)); f.setAttribute("cy", fy.toFixed(1));
+    f.setAttribute("rx", (0.9 + rnd()*1.6).toFixed(1));
+    f.setAttribute("ry", (0.6 + rnd()*0.9).toFixed(1));
+    f.setAttribute("transform", "rotate(" + (rnd()*180-90).toFixed(0) + " " + fx.toFixed(1) + " " + fy.toFixed(1) + ")");
+    f.setAttribute("fill", rnd() > 0.4 ? "#7C9A3E" : "#A8BC70");
+    f.setAttribute("opacity", (0.55 + rnd()*0.35).toFixed(2));
+    fleck.appendChild(f);
+  }
+  var sand = document.getElementById("sandSpeckle");
+  for (var m=0;m<40;m++){
+    var sc = ns("circle");
+    sc.setAttribute("cx", (176 + rnd()*172).toFixed(1));
+    sc.setAttribute("cy", (114 + rnd()*36).toFixed(1));
+    sc.setAttribute("r", (1 + rnd()*1.6).toFixed(1));
+    sc.setAttribute("fill", rnd() > 0.5 ? "#A8BC70" : "#5B782B");
+    sand.appendChild(sc);
+  }
+  var bfleck = document.getElementById("bowlFleck");
+  for (var b=0;b<64;b++){
+    var bf = ns("ellipse");
+    var bx = 166 + rnd()*192, by = 80 + rnd()*82;
+    bf.setAttribute("cx", bx.toFixed(1)); bf.setAttribute("cy", by.toFixed(1));
+    bf.setAttribute("rx", (1 + rnd()*1.7).toFixed(1));
+    bf.setAttribute("ry", (0.7 + rnd()*1).toFixed(1));
+    bf.setAttribute("transform", "rotate(" + (rnd()*180-90).toFixed(0) + " " + bx.toFixed(1) + " " + by.toFixed(1) + ")");
+    bf.setAttribute("fill", rnd() > 0.4 ? "#7C9A3E" : "#A8BC70");
+    bf.setAttribute("opacity", (0.55 + rnd()*0.35).toFixed(2));
+    bfleck.appendChild(bf);
+  }
+
+  var nuts = document.getElementById("topNuts");
+  for (var n=0;n<30;n++){
+    var nx = 132 + rnd()*256, nyy = 158 + rnd()*13;
+    var rot = (rnd()*180-90).toFixed(0);
+    var g2 = ns("g"); g2.setAttribute("class","nut");
+    g2.style.transitionDelay = (0.03 * n).toFixed(2) + "s";
+    var kind = rnd();
+
+    if (kind > 0.62){
+      /* toasted flaked almond — long pale sliver */
+      var al = ns("ellipse");
+      al.setAttribute("cx", nx.toFixed(1)); al.setAttribute("cy", nyy.toFixed(1));
+      al.setAttribute("rx", (7 + rnd()*4).toFixed(1));
+      al.setAttribute("ry", (1.9 + rnd()*0.9).toFixed(1));
+      al.setAttribute("transform", "rotate(" + rot + " " + nx.toFixed(1) + " " + nyy.toFixed(1) + ")");
+      al.setAttribute("fill", rnd() > 0.5 ? "#E7D3AA" : "#CBA971");
+      g2.appendChild(al);
+    } else if (kind > 0.5){
+      /* mint leaf */
+      var lf = ns("path");
+      lf.setAttribute("d","M0 0 C 5 -5, 12 -4, 15 0 C 12 4, 5 5, 0 0 Z");
+      lf.setAttribute("fill", rnd() > 0.5 ? "#4F7C39" : "#69A04C");
+      lf.setAttribute("transform","translate(" + (nx-7).toFixed(1) + " " + nyy.toFixed(1) + ") rotate(" + rot + ") scale(" + (0.7 + rnd()*0.5).toFixed(2) + ")");
+      g2.appendChild(lf);
+    } else {
+      /* chopped pistachio */
+      var e = ns("ellipse");
+      e.setAttribute("cx", nx.toFixed(1)); e.setAttribute("cy", nyy.toFixed(1));
+      e.setAttribute("rx", (3.6 + rnd()*2.6).toFixed(1));
+      e.setAttribute("ry", (2.8 + rnd()*1.6).toFixed(1));
+      e.setAttribute("transform", "rotate(" + rot + " " + nx.toFixed(1) + " " + nyy.toFixed(1) + ")");
+      var pick = rnd();
+      e.setAttribute("fill", pick > 0.78 ? "#8C5A6E" : (pick > 0.38 ? "#7C9A3E" : "#A8BC70"));
+      g2.appendChild(e);
+    }
+    nuts.appendChild(g2);
+  }
+
+  /* ---------- navigation ---------- */
+  var scene = document.getElementById("scene");
+  var caption = document.getElementById("caption");
+  var prev = document.getElementById("prev");
+  var next = document.getElementById("next");
+  var segs = ribbon.querySelectorAll(".seg");
+  var items = list.querySelectorAll(":scope > li");
+  var current = 0;
+
+  function go(i){
+    if (i < 0 || i >= STEPS.length) return;
+    current = i;
+    scene.setAttribute("data-step", String(i + 1));
+    caption.innerHTML = STEPS[i].caption;
+    for (var a=0;a<items.length;a++){
+      items[a].setAttribute("data-active", a === i ? "true" : "false");
+      if (segs[a]) segs[a].setAttribute("aria-current", a === i ? "step" : "false");
+    }
+    prev.disabled = (i === 0);
+    next.disabled = (i === STEPS.length - 1);
+    next.textContent = (i === STEPS.length - 1) ? "Finished" : "Next step";
+  }
+
+  prev.addEventListener("click", function(){ go(current - 1); });
+  next.addEventListener("click", function(){ go(current + 1); });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowRight") go(current + 1);
+    if (e.key === "ArrowLeft") go(current - 1);
+  });
+
+  go(0);
+})();
+</script>
